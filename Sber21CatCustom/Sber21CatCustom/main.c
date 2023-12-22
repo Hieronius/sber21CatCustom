@@ -59,7 +59,7 @@ typedef struct {
     int v;
 } arguments; // struct with all possible flags for our project "sber21_cat"
 
-void argument_parser(int argc, char **argv);
+arguments *argument_parser(int argc, char **argv);
 
 int main(int argc, char *argv[]) {
     // argc - Arguments count
@@ -70,4 +70,41 @@ int main(int argc, char *argv[]) {
     }
     
     return 0;
+}
+
+arguments *argument_parser(int argc, char **argv) {
+    arguments arg = {0}; // our programm will fill all other properties with zeroes
+    int opt; // result of flag parsing. opt - option
+    opt = getopt_long(argc, argv, "bnsEeTt", NULL, 0);
+    switch (opt) {
+        case 'b':
+            arg.b = 1; // seems like it's just mean "true/false" of being used one of the options
+            break;
+        case 'n':
+            arg.n = 1;
+            break;
+        case 's':
+            arg.s = 1;
+            break;
+        case 'e':
+            arg.E = 1;
+            arg.v = 1; // mean the same
+            break;
+        case 'E':
+            arg.E = 1;
+            break;
+        case 't':
+            arg.T = 1;
+            arg.v = 1; // mean the same
+            break;
+        case 'T':
+            arg.T = 1;
+            break;
+        case '?': // if func will return ? print an error in specific place
+            perror("ERROR");
+            break;
+        default:
+            break;
+    }
+    return arg;
 }
