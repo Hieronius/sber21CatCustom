@@ -50,6 +50,16 @@ struct option {
 #include <getopt.h> // "get options"
 #include <stdlib.h> // need because we should use dynamic memory + "exit" func
 
+typedef struct {
+    int b;
+    int n;
+    int s;
+    int E;
+    int T;
+    int v;
+} arguments; // struct with all possible flags for our project "sber21_cat"
+
+void argument_parser(int argc, char **argv);
 
 int main(int argc, char *argv[]) {
     // argc - Arguments count
