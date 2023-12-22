@@ -19,7 +19,15 @@
  - код 127 через ^? Кроме табуляции и конца строкки */
 
 #include <stdio.h>
-#include <getopt.h>
+#include <getopt.h> // "get options"
+
+// int getopt long (int argc, char **argv, const char *shortopts,
+// const struct option *longopts, int *longind)
+
+// int optind - global variable
+
+// const char *shortopts - it's a set of flags for our cat.
+// it's variable need to understand when our flags are over and file path is started
 
 int main(int argc, const char * argv[]) {
     // insert code here...
