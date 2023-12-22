@@ -46,6 +46,15 @@ struct option {
 }
 */
 
+// MARK: getline()
+/*
+ 1. To use getline() we should create variables that should store our string and it's length
+ 2. Read of the string. getline() reads a string from the data source (for example, a file) until it's meet a \n char or the end of the file EOF
+ 3. Dynamic memory allocation. It's one of the special abilities of the getline() to automatic memory managment. So it will locate a new memory and alocate or expand memory that need to store the string to read. We doesn't need to know an exact length of the string
+ 4. Return value. After reading of the string by getline(), this function should return an amount of characters that have been read. If the string wasn't successfuly read (for example, end of the file (EOF) was reached), getline() returns "-1"
+ 5. Freeing up memory. Because getline manages memory automaticaly, it's very important to free this memory, when we don't need it anymore and to avoid memory leeks.
+ */
+
 #include <stdio.h>
 #include <getopt.h> // "get options"
 #include <stdlib.h> // need because we should use dynamic memory + "exit" func
