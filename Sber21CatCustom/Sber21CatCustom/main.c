@@ -107,4 +107,12 @@ arguments *argument_parser(int argc, char **argv) {
             break;
     }
     return arg;
+
+// func to print string to the screen
+void outlineONE(char *line, int n) {
+    for (int i = 0; i < n; i++) {
+        putchar(line[i]);
+    }
+}
+
 }
