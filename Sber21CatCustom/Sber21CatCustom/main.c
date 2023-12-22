@@ -69,6 +69,9 @@ typedef struct {
 } arguments; // struct with all possible flags for our project "sber21_cat"
 
 arguments *argument_parser(int argc, char **argv);
+void outlineONE(char *line, int n); // from the commentary it's should be just "outline" but i can't use it.
+// Still don't know what does this function makes
+void readline();
 
 int main(int argc, char *argv[]) {
     // argc - Arguments count
