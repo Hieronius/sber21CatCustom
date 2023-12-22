@@ -18,11 +18,19 @@
  -v Выводит символы с кодами <= 31 через ^+64
  - код 127 через ^? Кроме табуляции и конца строкки */
 
-#include <stdio.h>
-#include <getopt.h> // "get options"
-
-// int getopt long (int argc, char **argv, const char *shortopts,
-// const struct option *longopts, int *longind)
+// MARK: int getopt long (int argc, char **argv, const char *shortopts,const struct option *longopts, int *longind)
+/*
+ 1. argc/argv - amount and arguments of command line that our program got
+ 2. optsting - string that contains a list of short options. Each char in this string it's a short option like "r" that programm can run. If char has ":" it's mean that this option is require an argument
+ 3. longtops - it's an array of structs "option" that is defines long options (like "number").
+               Each struct contains a name of option, defines if options need an arguments, and can define a variable and return value when function was detected.
+ 4. longindex - it's a pointer on variable where "getopt_long" will place an index of current option to an array "longopts"
+ 5. return value - "getopt_long" - return a code of operation:
+                    - usually one-char for short options
+                    - "0" for long options
+                    - "-1" when all options have been processed
+                    - "?" when function returns any errors
+ */
 
 // int optind - global variable
 
@@ -38,8 +46,18 @@ struct option {
 }
 */
 
-int main(int argc, const char * argv[]) {
-    // insert code here...
-    printf("Hello, World!\n");
+#include <stdio.h>
+#include <getopt.h> // "get options"
+#include <stdlib.h> // need because we should use dynamic memory + "exit" func
+
+
+int main(int argc, char *argv[]) {
+    // argc - Arguments count
+    // argv - Arguments values with two asterisks because an array of strings(names) it's two-dimensional array of chars. **argv = *argv[]
+    
+    for (int i = 0; i < argc; i++) {
+        printf("argv is %s", *(argv + i));
+    }
+    
     return 0;
 }
