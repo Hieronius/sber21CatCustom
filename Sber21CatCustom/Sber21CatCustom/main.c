@@ -77,8 +77,6 @@ int main(int argc, char *argv[]) {
     // argc - Arguments count
     // argv - Arguments values with two asterisks because an array of strings(names) it's two-dimensional array of chars. **argv = *argv[]
     
-    for (int i = 0; i < argc; i++) {
-        printf("argv is %s", *(argv + i));
     }
     
     return 0;
