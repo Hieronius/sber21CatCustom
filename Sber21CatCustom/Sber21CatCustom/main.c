@@ -37,6 +37,7 @@
 // const char *shortopts - it's a set of flags for our cat.
 // it's variable need to understand when our flags are over and file path is started
 
+// MARK: struct option
 /*
 struct option {
     const char *name; - name of the long option for example - "number"
