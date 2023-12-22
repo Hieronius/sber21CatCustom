@@ -29,6 +29,15 @@
 // const char *shortopts - it's a set of flags for our cat.
 // it's variable need to understand when our flags are over and file path is started
 
+/*
+struct option {
+    const char *name; - name of the long option for example - "number"
+    int has_arg; - we should use "no_argument"
+    int *flag; - we doesn't need it because flag mean - "write a result of the function above to specific variable. We should just return the function during the cat method
+    int val; - name for the short option for example - "n" from "number"
+}
+*/
+
 int main(int argc, const char * argv[]) {
     // insert code here...
     printf("Hello, World!\n");
