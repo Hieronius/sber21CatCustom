@@ -69,24 +69,45 @@ typedef struct {
     int v;
 } arguments; // struct with all possible flags for our project "sber21_cat"
 
-arguments *argument_parser(int argc, char **argv);
-void outlineONE(char *line, int n); // from the commentary it's should be just "outline" but i can't use it.
+arguments argument_parser(int argc, char **argv);
+void outlineONE(arguments *arg, char *line, int n); // from the commentary it's should be just "outline" but i can't use it.
 // Still don't know what does this function makes
 void readline();
+// Same thing here
+char v_output(char ch);
+
+// Another unknow function
+void output(arguments *arg, char **argv);
 
 int main(int argc, char *argv[]) {
     // argc - Arguments count
     // argv - Arguments values with two asterisks because an array of strings(names) it's two-dimensional array of chars. **argv = *argv[]
     
-    }
+    arguments arg = argument_parser(argc, argv); // get arguments from parser
+    output(&arg, argv);
     
     return 0;
 }
 
-arguments *argument_parser(int argc, char **argv) {
+arguments argument_parser(int argc, char **argv) {
+    // 1. Define an empty arg
     arguments arg = {0}; // our programm will fill all other properties with zeroes
+
+    // 2. Define an array of structs of option
+    // All this options and it's meaning you can check with MAN
+    struct option long_options[] = {
+        {"number", no_argument, NULL, 'n'}, // -- before the option is not necessary
+        {"number-nonblank", no_argument, NULL, 'b'},
+        {"squeeze-blank", no_argument, NULL, 's'},
+        {0, 0, 0, 0},
+        // it's an analogy of terminator operatopr "zero" or "0" at the end of the string.
+    };
+
+    // 3. Pass this array of option to the option value by getop_long
     int opt; // result of flag parsing. opt - option
-    opt = getopt_long(argc, argv, "bnsEeTt", NULL, 0);
+    opt = getopt_long(argc, argv, "bnsEeTt", long_options, 0);
+
+    // Check the result of the func getop_long and analize it
     switch (opt) {
         case 'b':
             arg.b = 1; // seems like it's just mean "true/false" of being used one of the options
@@ -112,18 +133,97 @@ arguments *argument_parser(int argc, char **argv) {
             arg.T = 1;
             break;
         case '?': // if func will return ? print an error in specific place
-            perror("ERROR");
+            perror("ERROR"); // the same as printf but prints an error to the different stream
+            exit(1); // stop executing the program
             break;
-        default:
+        default: // if there is no any flag print and error
+            perror("Error");
+            exit(1);
             break;
     }
     return arg;
+}
 
 // func to print string to the screen
-void outlineONE(char *line, int n) {
+void outlineONE(arguments *arg, char *line, int n) {
     for (int i = 0; i < n; i++) {
-        putchar(line[i]);
+        
+        // MARK: FLAG "T" implementation
+        if (arg->T && line[i] == '\t') {
+            printf("^I");
+        }
+        
+        // MARK: FLAG "E" implementation
+        if (arg->E && line[i] == '\n') { // if our flag is "E" and it's is the end of the line:
+            putchar('$'); // print "$"
+        }
+        
+        // MARK: FLAG "v" implementation
+        if (arg->v) {
+            line[i] = v_output(line[i]);
+            putchar(line[i]);
+        }
     }
 }
 
+void readline() {
+    
+}
+
+// Something connected to ASCII chars and uppercase/lowercase things
+char v_output(char ch) {
+    if (ch == '\n' || ch == '\t') {
+        if (ch < 0) { // if user used non-english (many bytes chars)
+            printf("M-");
+            ch = ch & 0x7f; // use a single bite operator "&"
+        }
+    }
+    if (ch <= 31) {
+        putchar('^');
+        ch += 64;
+    } else if (ch == 127) {
+        putchar('^');
+        ch = '?';
+    }
+    return ch;
+}
+
+void output(arguments *arg, char **argv) {
+    FILE *f = fopen(argv[1], "r"); // method to access the file with file path and a flag of what work should be made.
+    
+    char *line = NULL;
+    size_t memline = 0; // size_t it's just a struct with int/long/float under the hood.
+    // in other words this variable mean a positive number of the memory which has been allocated for the line
+    
+    int read = 0; // it's a flag of getline() function return value to evaluate what to do next
+    
+    int line_count = 1; // in cat strings should be counted from 1 instead of 0
+    int empty_count = 0; //
+    
+    read = getline(&line, &memline, f); // what to read, what memory to allocate and from what file to get
+    
+    while (read != -1) {
+        if (line[0] == '\n') { // implementation for "emptyString counter"
+            empty_count += 1;
+        }
+        if (arg->s && empty_count <= 1) { // if flag "s" just skip empty strings
+            continue;
+        } else {
+            
+            if (arg->n || arg->b) { // implementation for "lineCounter"
+                if (arg->b && line[0] != '\n') {
+                    printf("%6d\t", line_count); // set tabulation of 6 symbols
+                    line_count += 1;
+                } else if (arg->n) {
+                    printf("%6d\t", line_count);
+                    line_count += 1;
+                }
+                outlineONE(arg, line, read);
+                read = getline(&line, &memline, f);
+                line_count += 1;
+            }
+        }
+        free(line);
+        fclose(f); // we should close all files after being opened for good practice.
+    }
 }
