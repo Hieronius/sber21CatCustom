@@ -7,7 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		DD9167552B351782005021E2 /* main.c in Sources */ = {isa = PBXBuildFile; fileRef = DD9167542B351782005021E2 /* main.c */; };
+		DD8856CE2B5015320006512F /* Old_version.c in Sources */ = {isa = PBXBuildFile; fileRef = DD8856CD2B5015320006512F /* Old_version.c */; };
+		DD9167552B351782005021E2 /* cat.c in Sources */ = {isa = PBXBuildFile; fileRef = DD9167542B351782005021E2 /* cat.c */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -23,8 +24,9 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		DD8856CD2B5015320006512F /* Old_version.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = Old_version.c; sourceTree = "<group>"; };
 		DD9167512B351782005021E2 /* Sber21CatCustom */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = Sber21CatCustom; sourceTree = BUILT_PRODUCTS_DIR; };
-		DD9167542B351782005021E2 /* main.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = main.c; sourceTree = "<group>"; };
+		DD9167542B351782005021E2 /* cat.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = cat.c; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -57,7 +59,8 @@
 		DD9167532B351782005021E2 /* Sber21CatCustom */ = {
 			isa = PBXGroup;
 			children = (
-				DD9167542B351782005021E2 /* main.c */,
+				DD9167542B351782005021E2 /* cat.c */,
+				DD8856CD2B5015320006512F /* Old_version.c */,
 			);
 			path = Sber21CatCustom;
 			sourceTree = "<group>";
@@ -119,7 +122,8 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				DD9167552B351782005021E2 /* main.c in Sources */,
+				DD8856CE2B5015320006512F /* Old_version.c in Sources */,
+				DD9167552B351782005021E2 /* cat.c in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
