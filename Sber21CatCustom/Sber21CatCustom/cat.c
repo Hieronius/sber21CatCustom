@@ -22,14 +22,14 @@
 
 
 typedef struct options {
-    bool non_blank_rows; // -b Number of non-empty strings
-    bool show_end; // -e $ at the end of string
-    bool all_rows; // -n Number of strings
-    bool squeezed; // -s Skipping of unnecessary strings
-    bool show_tabs; // -t ^| instead of tabulation
-    bool show_all; // -v prints chars with codes: <= 31 on ^+64.
+    bool bFlag; // -b Number of non-empty strings
+    bool eFlag; // -e $ at the end of string
+    bool nFlag; // -n Number of strings
+    bool sFlag; // -s Skipping of unnecessary strings
+    bool tFlag; // -t ^| instead of tabulation 
+    bool vFlag; // -v prints chars with codes: <= 31 on ^+64.
     // code 127 on ^? besides tabulation and the end of the line */
-    int count; // should be renamed.
+    int flagsCounter; // should be renamed.
     int emptyLinesCounter; // property we need for correct work of -s flag
 } options;
 
@@ -38,8 +38,8 @@ void catOpenFile(int argc, char *argv[], options *currentOptionsSet);
 void parseOptions(int argc, char *argv[], options *currentOptionsSet);
 void parseShortFlags(char *arg, options *currentOptionsSet);
 void getCatFinalResult(int *content, int *previous, options *currentOptionsSet, FILE *file);
-void applyFlagV(int *content, options *currentOptionsSet);
-void getEmptyLines(int *content, int *previous, options *currentOptionsSet);
+void applyFlagsETV(int *content, options *currentOptionsSet);
+void countEmptyLines(int *content, int *previous, options *currentOptionsSet);
 void applyFlagS(int *content, FILE *file, options *currentOptionsSet);
 void applyFlagN(int previous, options *currentOptionsSet);
 void parseLongFlags(char *argv, options *currentOptionsSet);
@@ -47,8 +47,7 @@ void parseLongFlags(char *argv, options *currentOptionsSet);
 int main(int argc, char *argv[]) {
     
     if (argc == 1) {
-        options currentOptionsSet = {0};
-        catPrintFileContent(stdin, &currentOptionsSet);
+         catPrintFileContent(stdin, NULL);
         
     } else {
         
@@ -58,11 +57,10 @@ int main(int argc, char *argv[]) {
           parseOptions(argc, argv, &currentOptionsSet);
           
           // if there is zero flags:
-        if (!currentOptionsSet.count)
-          fprintf(stderr, "s21_cat: invalid options\n");
-          
-        else {
-          printf("Parsed options successfully: %d\n", currentOptionsSet.count);
+          if (!currentOptionsSet.flagsCounter) {
+              fprintf(stderr, "s21_cat: invalid options\n");
+              
+          } else {
           // apply parsed options and proceed to the file:
           catOpenFile(argc, argv, &currentOptionsSet);
         }
@@ -75,10 +73,10 @@ int main(int argc, char *argv[]) {
 // Read char by char until the end of the file and print to the stdout
 void catPrintFileContent(FILE *file, options *currentOptionsSet) {
     int content;
-    int previous;
+    int previous = '\n';
     if (currentOptionsSet) {
         currentOptionsSet->emptyLinesCounter = 0;
-        currentOptionsSet->count = 1;
+        currentOptionsSet->flagsCounter = 1;
     }
     while ((content = fgetc(file)) != EOF) {
         if (currentOptionsSet) {
@@ -87,20 +85,21 @@ void catPrintFileContent(FILE *file, options *currentOptionsSet) {
         if (content != EOF) {
             fputc(content, stdout);
         }
+        previous = content;
     }
 }
 
 // Attempt to open file for reading. If success let's read file char by char. Otherwise print an error
 void catOpenFile(int argc, char *argv[], options *currentOptionsSet) {
     // If there is a few flags let's count it, otherwise move towards the file
-    int i = currentOptionsSet ? 1 + currentOptionsSet->count : 1;
+    int i = currentOptionsSet ? 1 + currentOptionsSet->flagsCounter : 1;
     for (; i < argc; i++) {
-        FILE *file = fopen(argv[1], "r");
+        FILE *file = fopen(argv[i], "r");
         if (file) {
             catPrintFileContent(file, currentOptionsSet);
             fclose(file);
         } else {
-            fprintf(stderr, "cat: %s: No such file or directory\n", argv[1]);
+            fprintf(stderr, "cat: %s: No such file or directory\n", argv[i]);
         }
     }
 }
@@ -109,7 +108,7 @@ void catOpenFile(int argc, char *argv[], options *currentOptionsSet) {
 void parseOptions(int argc, char *argv[], options *currentOptionsSet) {
     for (int i = 1; i < argc; i++) {
         if (argv[i][0] == '-') {
-            currentOptionsSet->count++;
+            currentOptionsSet->flagsCounter++;
             
             if (!strstr(argv[i] + 1, "-")) {
                 parseShortFlags(argv[i], currentOptionsSet);
@@ -119,7 +118,7 @@ void parseOptions(int argc, char *argv[], options *currentOptionsSet) {
             }
             
         }
-        if (!currentOptionsSet->count) {
+        if (!currentOptionsSet->flagsCounter) {
             break;
         }
     }
@@ -128,35 +127,37 @@ void parseOptions(int argc, char *argv[], options *currentOptionsSet) {
 void parseShortFlags(char *arg, options *currentOptionsSet) {
     int len = strlen(arg);
     for (int j = 1; j < len; j++) {
-        if (currentOptionsSet->count) {
+        if (currentOptionsSet->flagsCounter) {
             switch (arg[j]) {
+                case 'v':
+                    currentOptionsSet->vFlag = true;
                 case 'b':
-                    currentOptionsSet->non_blank_rows = true;
+                    currentOptionsSet->bFlag = true;
                     break;
                 case 'e':
-                    currentOptionsSet->show_end = true;
-                    currentOptionsSet->show_all = true;
+                    currentOptionsSet->vFlag = true;
+                    currentOptionsSet->eFlag = true;
                     break;
                 case 'n':
-                    currentOptionsSet->all_rows = true;
+                    currentOptionsSet->nFlag = true;
                     break;
                 case 's':
-                    currentOptionsSet->squeezed = true;
+                    currentOptionsSet->sFlag = true;
                     break;
                 case 't':
-                    currentOptionsSet->show_tabs = true;
-                    currentOptionsSet->show_all = true;
+                    currentOptionsSet->vFlag = true;
+                    currentOptionsSet->tFlag = true;
                     break;
                 case 'E':
-                    currentOptionsSet->show_end = true;
+                    currentOptionsSet->eFlag = true;
                     break;
                 case 'T':
-                    currentOptionsSet->show_tabs = true;
+                    currentOptionsSet->tFlag = true;
                     break;
                     
                 // if flag is not valid let's end the search
                 default:
-                    currentOptionsSet->count = 0;
+                    currentOptionsSet->flagsCounter = 0;
                     break;
             }
         } else
@@ -164,51 +165,54 @@ void parseShortFlags(char *arg, options *currentOptionsSet) {
     }
 }
 
+// Final output of the program
 void getCatFinalResult(int *content, int *previous, options *currentOptionsSet, FILE *file) {
-    getEmptyLines(content, previous, currentOptionsSet);
+    countEmptyLines(content, previous, currentOptionsSet);
     applyFlagS(content, file, currentOptionsSet);
     if (*content != EOF) {
-        applyFlagV(content, currentOptionsSet);
         applyFlagN(*previous, currentOptionsSet);
+        applyFlagsETV(content, currentOptionsSet);
     }
-
 }
 
-void applyFlagV(int *content, options *currentOptionsSet) {
+// There should be placed implementation of -v, -e and -t flags
+void applyFlagsETV(int *content, options *currentOptionsSet) {
     if (*content == '\n') {
-        if (currentOptionsSet->show_end) {
+        if (currentOptionsSet->eFlag) {
             printf("$");
-        } else if (*content == '\t') {
-            if (currentOptionsSet->show_tabs) {
-                printf("^");
-                *content = 'I';
-            }
-        } else if (currentOptionsSet->show_all) {
-            if (*content <= 31) {
-                printf("^");
-                *content += 64;
-            } else if (*content == 127) {
-                printf("^");
-                *content = '?';
-            } else if (*content >= 128 && *content < 128 + 32) {
-                printf("M-^");
-                *content -= 64;
-            }
+        }
+    } else if (*content == '\t') {
+        if (currentOptionsSet->tFlag) {
+            printf("^");
+            *content = 'I';
+        }
+
+    } else if (currentOptionsSet->vFlag) {
+        if (*content <= 31) {
+            printf("^");
+            *content += 64;
+        } else if (*content == 127) {
+            printf("^");
+            *content = '?';
+        } else if (*content >= 128 && *content < 128 + 32) {
+            printf("M-^");
+            *content -= 64;
         }
     }
 }
 
-// probably flag S
-void getEmptyLines(int *content, int *previous, options *currentOptionsSet) {
-  if (*previous == '\n' && *content == '\n')
-    currentOptionsSet->emptyLinesCounter++;
-  else
-    currentOptionsSet->emptyLinesCounter = 0;
+// Empty lines counter here
+void countEmptyLines(int *content, int *previous, options *currentOptionsSet) {
+    if (*previous == '\n' && *content == '\n') {
+        currentOptionsSet->emptyLinesCounter++;
+    }else {
+        currentOptionsSet->emptyLinesCounter = 0;
+    }
 }
 
-// probably flag S
+// Implementation of flag -s
 void applyFlagS(int *content, FILE *file, options *currentOptionsSet) {
-    if (currentOptionsSet->squeezed && currentOptionsSet->emptyLinesCounter > 1) {
+    if (currentOptionsSet->sFlag && currentOptionsSet->emptyLinesCounter > 1) {
         while (*content == '\n') {
             *content = fgetc(file);
         }
@@ -216,23 +220,24 @@ void applyFlagS(int *content, FILE *file, options *currentOptionsSet) {
     }
 }
 
+// Implemetation of flag -n
 void applyFlagN(int previous, options *currentOptionsSet) {
-  if (previous == '\n' && (currentOptionsSet->all_rows || currentOptionsSet->non_blank_rows)) {
-    if (!(currentOptionsSet->non_blank_rows && currentOptionsSet->emptyLinesCounter > 0)) {
-      printf("%6d\t", currentOptionsSet->count);
-      currentOptionsSet->count++;
+  if (previous == '\n' && (currentOptionsSet->nFlag || currentOptionsSet->bFlag)) {
+    if (!(currentOptionsSet->bFlag && currentOptionsSet->emptyLinesCounter > 0)) {
+      printf("%6d\t", currentOptionsSet->flagsCounter);
+      currentOptionsSet->flagsCounter++;
     }
   }
 }
 
 void parseLongFlags(char *argv, options *currentOptionsSet) {
     if (!strcmp(argv + 2, "number-nonblank")) {
-        currentOptionsSet->non_blank_rows = true;
+        currentOptionsSet->bFlag = true;
     } else if (!strcmp(argv + 2, "number")) {
-        currentOptionsSet->all_rows = true;
+        currentOptionsSet->nFlag = true;
     } else if  (!strcmp(argv + 2, "squeeze-blank")) {
-        currentOptionsSet->squeezed = true;
+        currentOptionsSet->sFlag = true;
     }else {
-        currentOptionsSet->count = 0;
+        currentOptionsSet->flagsCounter = 0;
     }
 }
