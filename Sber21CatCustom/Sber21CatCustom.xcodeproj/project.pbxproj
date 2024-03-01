@@ -8,6 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		DD9167552B351782005021E2 /* cat.c in Sources */ = {isa = PBXBuildFile; fileRef = DD9167542B351782005021E2 /* cat.c */; };
+		DD9BA7D72B9156F0008E8F72 /* Makefile in Sources */ = {isa = PBXBuildFile; fileRef = DD9BA7D62B9156F0008E8F72 /* Makefile */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -25,6 +26,7 @@
 /* Begin PBXFileReference section */
 		DD9167512B351782005021E2 /* Sber21CatCustom */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = Sber21CatCustom; sourceTree = BUILT_PRODUCTS_DIR; };
 		DD9167542B351782005021E2 /* cat.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = cat.c; sourceTree = "<group>"; };
+		DD9BA7D62B9156F0008E8F72 /* Makefile */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.make; path = Makefile; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -58,6 +60,7 @@
 			isa = PBXGroup;
 			children = (
 				DD9167542B351782005021E2 /* cat.c */,
+				DD9BA7D62B9156F0008E8F72 /* Makefile */,
 			);
 			path = Sber21CatCustom;
 			sourceTree = "<group>";
@@ -119,6 +122,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				DD9BA7D72B9156F0008E8F72 /* Makefile in Sources */,
 				DD9167552B351782005021E2 /* cat.c in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
